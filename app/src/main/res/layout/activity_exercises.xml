@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/exercises_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="250dp"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/question_and_answer_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/image"
+            android:src="@drawable/repeat_arrow"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:padding="10dp"
+            android:layout_gravity="center"/>
+
+        <RadioGroup
+            android:id="@+id/radioSex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/radio_item_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Apple"/>
+
+            <RadioButton
+                android:id="@+id/radio_item_two"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Banana"/>
+
+            <RadioButton
+                android:id="@+id/radio_item_three"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mango"/>
+
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ok"
+            android:layout_marginLeft="260dp"
+            android:background="@drawable/learn_button"
+            android:textColor="@color/wordColor"/>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
