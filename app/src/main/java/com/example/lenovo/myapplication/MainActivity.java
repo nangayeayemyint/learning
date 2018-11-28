@@ -14,6 +14,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     int counter;
     String name;
+    SharedPreferences app_preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Get the app's shared preferences
-        PrefrenceKey.app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Update the TextView
         final TextView text = (TextView) findViewById(R.id.text);
@@ -48,13 +49,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void savePrefrence(){
-        PrefrenceKey.editor = PrefrenceKey.app_preferences.edit();
-        PrefrenceKey.editor.putString("name", name);
-        PrefrenceKey.editor.commit(); // Very important
+        SharedPreferences.Editor editor = app_preferences.edit();
+        editor.putString("name", name);
+        editor.commit(); // Very important
     }
 
     public void showPrefrence(){
-        String preference = PrefrenceKey.app_preferences.getString("name", "");
+        String preference = app_preferences.getString("name", "");
         Toast.makeText(MainActivity.this,preference+"",Toast.LENGTH_LONG).show();
     }
 }
