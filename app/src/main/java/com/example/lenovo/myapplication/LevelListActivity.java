@@ -10,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +28,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -40,10 +38,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class LevelListActivity extends AppCompatActivity {
-    List<SLevel> levelList = new ArrayList<>();
     LevelDatabase db;
-    ArrayAdapter<LevelRecord> adapter;
-    SharedPreferences app_preferences;
+    SharedPreferences preferences;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -70,7 +66,7 @@ public class LevelListActivity extends AppCompatActivity {
         db = Room.databaseBuilder(getApplicationContext(),LevelDatabase.class, "levelRecord.db").build();
         Toast.makeText(LevelListActivity.this, "Success",Toast.LENGTH_LONG );
         Type levelListType = new TypeToken<List<SLevel>>(){}.getType();
-        app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(levelListType, new ListLevelDeserialization());
@@ -78,7 +74,7 @@ public class LevelListActivity extends AppCompatActivity {
         Gson gson = gsonBuilder.create();
         GsonConverterFactory converterFactory = GsonConverterFactory.create(gson);
 
-        if(app_preferences.getBoolean(PrefrenceKey.isDownloaded,false)==false){
+        if(preferences.getBoolean(PrefrenceKey.isDownloaded,false)==false){
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("http://cdn.contentful.com/")
                     .addConverterFactory(converterFactory)
@@ -92,8 +88,7 @@ public class LevelListActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<List<SLevel>> call, Response<List<SLevel>> response) {
                     if (response.isSuccessful()) {
-
-                        levelList = response.body();
+                        List<SLevel> levelList = response.body();
                         updateLevel(levelList);
                     } else {
                         Toast.makeText(LevelListActivity.this, "error", Toast.LENGTH_SHORT).show();
@@ -110,7 +105,6 @@ public class LevelListActivity extends AppCompatActivity {
         }else{
             showTesk();
         }
-
     }
 
     public void updateLevel(final List<SLevel> levelList){
@@ -176,6 +170,7 @@ public class LevelListActivity extends AppCompatActivity {
     }
 
     public void showLevel(final List<LevelRecord> levelRecordList){
+        ArrayAdapter<LevelRecord> adapter;
         final ListView listView = (ListView) findViewById(R.id.listId);
         adapter = new LevelArrayAdapter(LevelListActivity.this, R.layout.item_level, levelRecordList);
         listView.setAdapter(adapter);
@@ -198,7 +193,7 @@ public class LevelListActivity extends AppCompatActivity {
     }
 
     public void savePrefrence(){
-        SharedPreferences.Editor editor = app_preferences.edit();
+        SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(PrefrenceKey.isDownloaded, true);
         editor.commit();// Very important
     }
