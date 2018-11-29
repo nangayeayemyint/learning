@@ -61,6 +61,11 @@ public class LevelListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        final String SPACE_ID = "xtnomdz5cbr8";
+        final String ENVIRONMENT_ID = "master";
+        final String CONTENT_TYPE = "level";
+        final String ACCESS_TOKEN = "8963b88da92f0fec2136bce1ceb438f1dfa13f120cd5c139d68687a1ae0a4af8";
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_level_list);
         db = Room.databaseBuilder(getApplicationContext(),LevelDatabase.class, "levelRecord.db").build();
@@ -81,7 +86,7 @@ public class LevelListActivity extends AppCompatActivity {
                     .build();
 
             LearnerService service = retrofit.create(LearnerService.class);
-            Call<List<SLevel>> call = service.getLevelList("xtnomdz5cbr8", "master", "level", "8963b88da92f0fec2136bce1ceb438f1dfa13f120cd5c139d68687a1ae0a4af8");
+            Call<List<SLevel>> call = service.getLevelList(SPACE_ID, ENVIRONMENT_ID, CONTENT_TYPE, ACCESS_TOKEN);
 
             call.enqueue(new Callback<List<SLevel>>() {
                 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -170,9 +175,8 @@ public class LevelListActivity extends AppCompatActivity {
     }
 
     public void showLevel(final List<LevelRecord> levelRecordList){
-        ArrayAdapter<LevelRecord> adapter;
         final ListView listView = (ListView) findViewById(R.id.listId);
-        adapter = new LevelArrayAdapter(LevelListActivity.this, R.layout.item_level, levelRecordList);
+        ArrayAdapter<LevelRecord> adapter = new LevelArrayAdapter(LevelListActivity.this, R.layout.item_level, levelRecordList);
         listView.setAdapter(adapter);
         listView.setDivider(null);
 
@@ -185,8 +189,8 @@ public class LevelListActivity extends AppCompatActivity {
                 String levelId=levelRecordList.get(position).levelId;
                 Toast.makeText(LevelListActivity.this, " "+position, Toast.LENGTH_SHORT).show();
                 Intent intent=new Intent(LevelListActivity.this, LevelActivity.class);
-                intent.putExtra("position", position);
-                intent.putExtra("levelId",levelId);
+                intent.putExtra(LevelActivity.LEVEL_POSITION_KEY, position);
+                intent.putExtra(LevelActivity.LEVEL_ID_KEY,levelId);
                 startActivity(intent);
             }
         });

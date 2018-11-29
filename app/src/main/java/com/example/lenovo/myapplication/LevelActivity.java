@@ -30,9 +30,16 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LevelActivity extends AppCompatActivity {
-    private String levelId="";
+    static final String LEVEL_POSITION_KEY = "position";
+    static final String LEVEL_ID_KEY = "levelId";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        final String SPACE_ID = "xtnomdz5cbr8";
+        final String ENVIRONMENT_ID = "master";
+        final String CONTENT_TYPE = "level";
+        final String ACCESS_TOKEN = "8963b88da92f0fec2136bce1ceb438f1dfa13f120cd5c139d68687a1ae0a4af8";
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_level);
 
@@ -51,22 +58,21 @@ public class LevelActivity extends AppCompatActivity {
                 .build();
 
         LearnerService service = retrofit.create(LearnerService.class);
-        Call<List<SLevel>> call = service.getLevelList("xtnomdz5cbr8", "master", "level", "8963b88da92f0fec2136bce1ceb438f1dfa13f120cd5c139d68687a1ae0a4af8");
+        Call<List<SLevel>> call = service.getLevelList(SPACE_ID, ENVIRONMENT_ID, CONTENT_TYPE, ACCESS_TOKEN);
 
         call.enqueue(new Callback<List<SLevel>>() {
             @RequiresApi(api=Build.VERSION_CODES.N)
             @Override
             public void onResponse(Call<List<SLevel>> call, Response<List<SLevel>> response) {
                 if(response.isSuccessful()) {
-                    List<SLevel> SLevelList = response.body();
-                    showAboutTitleLearningAndExercise(SLevelList);
+                    List<SLevel> sLevelList = response.body();
+                    showAboutTitleLearningAndExercise(sLevelList);
                     Toast.makeText(LevelActivity.this, "success", Toast.LENGTH_SHORT).show();
-
                 }
                 else {
                     Toast.makeText(LevelActivity.this, "error", Toast.LENGTH_SHORT).show();
                 }
-
+                
             }
 
             @Override
@@ -77,46 +83,52 @@ public class LevelActivity extends AppCompatActivity {
         });
     }
 
-    public void showAboutTitleLearningAndExercise(List<SLevel> SLevelList){
+    public void showAboutTitleLearningAndExercise(List<SLevel> sLevelList) {
         DataStore dataStore = new DataStore();
 
-        TextView textView = this.findViewById(R.id.item_level_name);
-        TextView expertnessRate = this.findViewById(R.id.expertness_rate);
+        TextView levelNameTextView = this.findViewById(R.id.item_level_name);
+        TextView expertnessRateTextView = this.findViewById(R.id.expertness_rate);
 
         Intent intent = getIntent();
         final Bundle bd = intent.getExtras();
 
 
-        if(bd != null)
-        {
-            Integer position = (Integer) bd.get("position");
-            levelId=  bd.getString("levelId");
+        if (bd != null) {
+            final Integer position = (Integer) bd.get(LEVEL_POSITION_KEY);
+            final String levelId = bd.getString(LEVEL_ID_KEY);
 
-            setTitle(SLevelList.get(position).name);
-            textView.setText(SLevelList.get(position).description);
-            expertnessRate.setText(dataStore.getLevel(position).expertness + "%");
+            if(position!=null && levelId!=null) {
+                setTitle(sLevelList.get(position).name);
+                levelNameTextView.setText(sLevelList.get(position).description);
+                expertnessRateTextView.setText(dataStore.getLevel(position).expertness + "%");
+
+                Button learningButton = this.findViewById(R.id.button_learning);
+                learningButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v2) {
+                        Intent intent = new Intent(LevelActivity.this, LevelLearningActivity.class);
+                        intent.putExtra("intex", position);
+                        intent.putExtra("levelId", levelId);
+                        startActivity(intent);
+                    }
+                });
+
+                Button exercisesButton = this.findViewById(R.id.button_exercises);
+                exercisesButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v2) {
+                        Intent intent = new Intent(LevelActivity.this, LevelExercisesActivity.class);
+                        intent.putExtra("index", position);
+                        startActivity(intent);
+
+                    }
+                });
+            }else{
+                Toast.makeText(LevelActivity.this, "Your position or levelId in Empty.", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            Toast.makeText(LevelActivity.this, "Your bundle in Empty.", Toast.LENGTH_SHORT).show();
         }
 
-        Button learningButton = this.findViewById(R.id.button_learning);
-        learningButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v2) {
-                Intent intent=new Intent(LevelActivity.this, LevelLearningActivity.class);
-                intent.putExtra("intex",(Integer)bd.get("position"));
-                intent.putExtra("levelId",levelId);
-                startActivity(intent);
-            }
-        });
-
-        Button exercisesButton = this.findViewById(R.id.button_exercises);
-        exercisesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v2) {
-                Intent intent=new Intent(LevelActivity.this, LevelExercisesActivity.class);
-                intent.putExtra("index",(Integer)bd.get("position"));
-                startActivity(intent);
-
-            }
-        });
     }
 }
