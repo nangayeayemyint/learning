@@ -46,7 +46,7 @@ public class LevelActivity extends AppCompatActivity {
         GsonConverterFactory converterFactory = GsonConverterFactory.create(gson);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://cdn.contentful.com/")
+                .baseUrl("http://cdn.contentful.com/")
                 .addConverterFactory(converterFactory)
                 .build();
 

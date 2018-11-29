@@ -81,7 +81,7 @@ public class LevelLearningActivity extends AppCompatActivity {
         GsonConverterFactory converterFactory = GsonConverterFactory.create(gson);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://cdn.contentful.com/")
+                .baseUrl("http://cdn.contentful.com/")
                 .addConverterFactory(converterFactory)
                 .build();
 
@@ -175,6 +175,5 @@ public class LevelLearningActivity extends AppCompatActivity {
         Picasso.get().load(SInstructionList.get(intex).imageUrl).into(imageView);
         //mediaPlayer.start();
     }
-
 
 }
